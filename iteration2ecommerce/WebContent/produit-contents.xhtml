@@ -1,0 +1,211 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<style type="text/css"> 
+    .ui-dataview-list .ui-dataview-row {
+        border-bottom: 1px solid #A8A8A8;
+        padding: 25px 10px;
+        /* with the exported variables from Nova and Luna Themes*/
+        border-bottom-color: var(--input-border-color, #A8A8A8);
+    }
+ 
+    .logo {
+        width: 5%;
+    }
+    .detail {
+        width: 85%;
+        padding-left: 25px;
+    }
+
+</style> 
+
+	<f:view>
+		<h:form>
+						   
+			<span class="ui-float-label">
+		       <p:inputText id="Recherche" value="#{backingBean.recherche}"  />
+		       <p:outputLabel for="@previous" value="Recherche"/>
+			</span>
+			<p:commandLink update=":form:panier" oncomplete="PF('panierDialog').show()" title="Accéder au panier">
+                <h:outputText styleClass="ui-icon pi pi-shopping-cart" style="margin:0 auto; font-size: 4rem; float: right"/>
+                <f:setPropertyActionListener value="#{panier}" target="#{backingBean.basket}" />
+	        </p:commandLink> 
+	      	<br/>
+       		<h:outputText 
+        		value="Total : #{backingBean.total} &#8364;" style="float: right">				
+			</h:outputText>	
+  							
+			<h:panelGrid columns="1" style="width:125px ">
+	        <p:outputLabel for="@next" />
+	        <p:selectOneMenu id="categorie" value="#{backingBean.categorie}" style="width:125px">
+	            <f:selectItem itemValue="0" itemLabel="Categorie" />
+			   	<f:selectItem itemValue="1" itemLabel="Roman" />
+			   	<f:selectItem itemValue="2" itemLabel="Informatique" />
+			   	<f:selectItem itemValue="3" itemLabel="Manga" />
+	            <f:facet name="footer">
+	            </f:facet>
+	        </p:selectOneMenu>
+	        </h:panelGrid>
+	        
+	        <h:panelGrid columns="1" style="width:125px ">
+	        <p:outputLabel for="@next" />
+	        <p:selectOneMenu id="prix" value="#{backingBean.prix}" style="width:125px">
+				<f:selectItem itemValue="0" itemLabel="Prix max" />
+			   	<f:selectItem itemValue="5" itemLabel="5€" />
+			   	<f:selectItem itemValue="10" itemLabel="10€" />
+			   	<f:selectItem itemValue="15" itemLabel="15€" />
+			   	<f:selectItem itemValue="20" itemLabel="20€" />
+			   	<f:selectItem itemValue="25" itemLabel="25€" />
+			   	<f:selectItem itemValue="30" itemLabel="30€" />
+			   	<f:selectItem itemValue="35" itemLabel="35€" />
+			   	<f:selectItem itemValue="40" itemLabel="40€" />
+	            <f:facet name="footer">
+	            </f:facet>
+	        </p:selectOneMenu>
+	        </h:panelGrid>
+	        <h:commandButton action="#{backingBean.filtrer}" value="Rechercher" />
+			<br/>
+			<br/>
+			<h:outputText 
+        		value="#{backingBean.produitSize}" style="font-weight: bold">				
+			</h:outputText>	
+			<h:outputText 
+        		value=" produits correspondants" >				
+			</h:outputText>
+		</h:form>
+	</f:view>
+	
+	<h:form id="form">
+		<p:dataView var="produit" value="#{backingBean.produit}"
+	                gridIcon="pi pi-th-large" listIcon="pi pi-bars"
+	                rows="10" paginator="true" rowsPerPageTemplate="5,10,15" paginatorAlwaysVisible="false"
+                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+	 
+	        <p:dataViewGridItem>
+	            <p:panel header="#{produit.nom}" style="text-align:center">
+	                <h:panelGrid columns="1" style="width:100%">
+	                    <p:graphicImage value="#{produit.url_image}" width="360"/> 
+	                    
+	                    <h:outputText value="Prix" />
+	                    <h:outputText value="#{produit.prix} &#8364;" style="font-weight: bold"/>
+	                    
+	                    <h:outputText value="Description" />
+	                    <h:outputText value="#{produit.description.substring(0, 30)}..." style="font-weight: bold"/>
+	                    	 					
+	                    <p:commandLink update=":form:produitDetail" oncomplete="PF('produitDialog').show()" title="View Detail">
+	                        <h:outputText styleClass="ui-icon pi pi-search-plus" style="margin:0 auto;" />
+	                        <f:setPropertyActionListener value="#{produit}" target="#{backingBean.selectedProduit}" />
+	                    </p:commandLink>
+	                </h:panelGrid>
+	            </p:panel>
+	        </p:dataViewGridItem>
+	 
+	        <p:dataViewListItem>
+	            <h:panelGrid columns="3" style="width:100%" columnClasses="logo,detail">
+	                <p:graphicImage value="#{produit.url_image}" width="100"/> 
+	                <p:outputPanel>
+	                    <h:panelGrid columns="2" cellpadding="5">
+	                        <h:outputText value="Nom" />
+	                        <h:outputText value="#{produit.nom}" style="font-weight: bold"/>
+	 
+							<h:outputText value="Description" />
+	                        <h:outputText value="#{produit.description.substring(0, 30)}..." style="font-weight: bold"/>
+	                        
+	                        <h:outputText value="Prix" />
+	                        <h:outputText value="#{produit.prix} &#8364;" style="font-weight: bold"/>
+
+							          
+	                    </h:panelGrid>
+	                </p:outputPanel>
+	   	 
+ 	                <p:commandLink update=":form:produitDetail" oncomplete="PF('produitDialog').show()" title="View Detail">
+	                    <h:outputText styleClass="ui-icon pi pi-search-plus" style="margin:0 auto;font-size: 2rem"/>
+	                    <f:setPropertyActionListener value="#{produit}" target="#{backingBean.selectedProduit}" />
+	                </p:commandLink> 
+	            </h:panelGrid>
+	        </p:dataViewListItem>
+	    </p:dataView> 
+	 
+	     <p:dialog header="Produit Info" widgetVar="produitDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="True">
+	        <p:outputPanel id="produitDetail" style="text-align:center;">
+	            <p:panelGrid  columns="2" columnClasses="label,value">
+	                <f:facet name="header">
+	                    <p:graphicImage value="#{backingBean.selectedProduit.url_image}" width="150"/> 
+	                </f:facet>
+	 
+	                <h:outputText value="Nom" />
+	                <h:outputText value="#{backingBean.selectedProduit.nom}" />
+	 
+	                <h:outputText value="Description" />
+	                <h:outputText value="#{backingBean.selectedProduit.description}"/>
+	 
+	               	<h:outputText value="Quantite dispo" />
+	                <h:outputText value="#{backingBean.selectedProduit.quantite}" />
+	 
+	                <h:outputText value="Prix" />
+	                <h:outputText value="#{backingBean.selectedProduit.prix} &#8364;"/>
+	           			
+	                <h:commandButton 
+		               	value="Ajouter au panier"
+						actionListener="#{backingBean.processAddAction}"/>  
+	                
+	            </p:panelGrid>
+	        </p:outputPanel>
+	    </p:dialog>  
+
+	     <p:dialog header="Panier" widgetVar="panierDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+			 <p:outputPanel id="panier" style="text-align:center">
+			 
+			    Vous avez <STRONG>#{backingBean.basketSize}</STRONG> article(s) dans votre panier.
+                <h:dataTable value="#{backingBean.basket}" var="panier"
+					 style="width: 100%; margin: auto;">
+					<h:column>
+	                    <p:graphicImage value="#{panier.produit.url_image}" width="50"/> 
+	                </h:column>
+			 		<h:column>
+			 			<f:facet name="header">Nom</f:facet>
+			 			#{panier.produit.nom}
+			 		</h:column>
+			 		<h:column>
+			 			<f:facet name="header">Prix Unitaire</f:facet>
+			 			#{panier.produit.prix} &#8364;
+			 		</h:column>
+			 		<h:column>
+			 			<f:facet name="header">Quantite</f:facet>
+			 			#{panier.quantity}
+			 		</h:column>
+			 		
+			 		<h:column>
+			 		<h:commandButton
+			               	value="+"
+							actionListener="#{backingBean.processAddAction}" >
+					</h:commandButton>
+					</h:column>
+					<h:column>
+			 		<h:commandButton
+			               	value="-"
+							actionListener="#{backingBean.processRemoveAction}" >
+					</h:commandButton>
+					</h:column>
+					
+		 		</h:dataTable>
+		 		<br/>
+		 		<br/>	
+
+       		<h:outputText 
+        		value="Total " >				
+			</h:outputText>
+       		<h:outputText 
+        		value="#{backingBean.total} &#8364;" >				
+			</h:outputText>
+			</p:outputPanel>
+	    </p:dialog>  
+	    
+
+	</h:form>
+
+</ui:composition>
